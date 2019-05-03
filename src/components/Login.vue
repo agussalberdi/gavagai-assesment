@@ -32,11 +32,11 @@ export default {
   components:{Loading},
   data () {
     return {
-        loading: false,
-        username: "",
-        password: "",
-        title: "Chatbot Tool",
-        errorMessage: ""
+      loading: false,
+      username: "",
+      password: "",
+      title: "Chatbot Tool",
+      errorMessage: ""
     }
   },
   methods:{
@@ -48,26 +48,26 @@ export default {
       } else if (!this.password) {
         this.errorMessage = "Password is empty"
       } else {
-        this.$http.post(baseURI, {
-          username: this.username,
-          password: this.password
-        }).then((result) => {
-            if (result.status == 200) {
-              const token = result.data.access_token;
-              this.loading = true;
+          this.$http.post(baseURI, {
+            username: this.username,
+            password: this.password
+          }).then((result) => {
+              if (result.status == 200) {
+                const token = result.data.access_token;
+                this.loading = true;
 
-              setTimeout(()=>{
-                this.loading = false;
-                this.$store.dispatch('auth_success',{name: this.username, token});
-                this.$router.push('/user')
-              },1000);
-            }
-        })
-        .catch((err) => {
-          this.errorMessage = err.response.data.Message;
-          this.username = "";
-          this.password = "";
-        })
+                setTimeout(()=>{
+                  this.loading = false;
+                  this.$store.dispatch('auth_success',{name: this.username, token});
+                  this.$router.push('/user')
+                },1000);
+              }
+          })
+          .catch((err) => {
+            this.errorMessage = err.response.data.Message;
+            this.username = "";
+            this.password = "";
+          })
       }
       
     }
@@ -137,6 +137,7 @@ button[type="submit"] {
 
 i {
   color: #000000;
+  margin-bottom: 10px;
 }
 
 p#error {

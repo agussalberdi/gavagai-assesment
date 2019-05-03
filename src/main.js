@@ -40,29 +40,29 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   created:function(){
-  	this.checkLogin()
+    this.checkLogin()
   },
   watch:{
-  	'$route':'checkLogin'
+    '$route':'checkLogin'
   },
   router,
   store,
   template: '<App/>',
   components: { App },
   methods:{
-  	checkLogin(){
-    
-  		if(!localStorage.getItem("token")) {
+    checkLogin(){
+
+      if(!localStorage.getItem("token")) {
         this.$router.push('login');
         return;
-      } 
+      }
 
       if(this.$store.username && localStorage.getItem('token')) {
          this.$router.push('user');
          return;
       }
-
-  	}
+    
+    }
   },
   render: h => h(App)
 })
