@@ -42,7 +42,7 @@ export default {
   methods:{
     login: function(){
       const baseURI = 'https://stage.apis.chatbot.gavagai.io/api/v1/login'
-      
+
       if (!this.username) {
         this.errorMessage = "User is empty";
       } else if (!this.password) {
@@ -51,9 +51,6 @@ export default {
           this.$http.post(baseURI, {
             username: this.username,
             password: this.password,
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
           }).then((result) => {
               if (result.status == 200) {
                 const token = result.data.access_token;
