@@ -20,15 +20,21 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    auth_success(store, name, token)
-    {
-      store.commit('username',name);
-      store.commit('token', token);
+    auth_success(store, payload) {
+      store.commit('username',payload.name);
+      store.commit('token', payload.token);
+      localStorage.setItem('username', payload.name);
+      localStorage.setItem('token', payload.token);
+    },
+    logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      location.reload();
     }
   }
 })
 
-Vue.prototype.$http = axios //this makes possible to use axios in all my code
+Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 new Vue({
@@ -45,23 +51,17 @@ new Vue({
   components: { App },
   methods:{
   	checkLogin(){
-      
+    
   		if(!localStorage.getItem("token")) {
         this.$router.push('login');
         return;
       } 
 
-      if(!this.$store.username && localStorage.getItem('token')) {
-        this.$store.dispatch('auth_success',this.$store.state.username, this.$store.state.token);
-        this.$router.push('user');
-        return;
-      }
-
       if(this.$store.username && localStorage.getItem('token')) {
          this.$router.push('user');
          return;
       }
-      
+
   	}
   },
   render: h => h(App)

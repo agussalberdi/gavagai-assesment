@@ -7,14 +7,14 @@
         <i class="far fa-user fa-2x"></i>
         <div>
           <input type="text" name="username" v-model="username">
-          <label for="username">Username</label>
+          <label for="username" :class="[username ? 'active' : '']">Username</label>
         </div>
       </div>
       <div class="form-item">
         <i class="fas fa-lock fa-2x"></i>
         <div>
-          <input type="PASSWORD" name="password" v-model="password">
-          <label for="password">Password</label>
+          <input type="password" name="password" v-model="password">
+          <label for="password" :class="[password ? 'active' : '']">Password</label>
         </div>
       </div>
       <button type="submit" v-on:click.prevent="login">LOGIN</button>
@@ -42,36 +42,33 @@ export default {
   methods:{
     login: function(){
       const baseURI = 'https://stage.apis.chatbot.gavagai.io/api/v1/login'
+      
+      if (!this.username) {
+        this.errorMessage = "User is empty";
+      } else if (!this.password) {
+        this.errorMessage = "Password is empty"
+      } else {
+        this.$http.post(baseURI, {
+          username: this.username,
+          password: this.password
+        }).then((result) => {
+            if (result.status == 200) {
+              const token = result.data.access_token;
+              this.loading = true;
 
-      this.$http.post(baseURI, {
-        username: this.username,
-        password: this.password
-      }).then((result) => {
-          if (result.status == 200) {
-
-            const token = result.data.access_token;
-            this.loading = true;
-
-            setTimeout(()=>{
-              this.loading = false;
-              
-              // use vuex to store user information
-              this.$store.dispatch('auth_success',this.username, token);
-              
-              // save login token and username in localstorage
-              localStorage.setItem('token', token);
-              localStorage.setItem('username', this.username);
-              // redirect to user page
-              this.$router.push('/user')
-            },1000);
-          }
-      })
-      .catch((err) => {
-        this.errorMessage = err.response.data.Message;
-        this.username = "";
-        this.password = "";
-      })
-
+              setTimeout(()=>{
+                this.loading = false;
+                this.$store.dispatch('auth_success',{name: this.username, token});
+                this.$router.push('/user')
+              },1000);
+            }
+        })
+        .catch((err) => {
+          this.errorMessage = err.response.data.Message;
+          this.username = "";
+          this.password = "";
+        })
+      }
       
     }
   }
@@ -128,7 +125,8 @@ form {
   transition: all 0.3s ease;
 }
 
-.form-item input:focus + label {
+.form-item input:focus + label,
+.form-item label.active {
   font-size: 14px;
   top: 0;
 }

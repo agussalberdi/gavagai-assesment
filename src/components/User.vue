@@ -17,8 +17,7 @@ export default {
   },
   methods:{
     logout(){
-      localStorage.removeItem('token');
-      location.reload();
+      this.$store.dispatch('logout');
     }
   },
   computed: {
