@@ -2,7 +2,7 @@
   <div>
     <form action="/post" v-if="!loading">
       <img src="../assets/img/gavagai.png" id="logo">
-      <h2>{{title}}</h2>
+      <h2 id="title">{{title}}</h2>
       <div class="form-item">
         <i class="far fa-user fa-2x"></i>
         <div>
@@ -19,7 +19,7 @@
       </div>
       <button type="submit" v-on:click.prevent="login">LOGIN</button>
       <a href="#">Forgot Password?</a>
-      <p v-if="errorMessage">{{errorMessage}}</p>
+      <p v-if="errorMessage" id="error">{{errorMessage}}</p>
     </form>
     <Loading v-if="loading"></Loading>
   </div>
@@ -47,23 +47,24 @@ export default {
         username: this.username,
         password: this.password
       }).then((result) => {
-        console.log(result);
-        if (result.status == 200) {
-          // show the loading message
-          this.loading = true;
-          setTimeout(()=>{
-            this.loading = false;
-            
-            // use vuex to store user inforamtion
-            this.$store.dispatch('update_user_name',this.username);
-            
-            // save login status in localstorage
-            localStorage.setItem('login', true);
-            
-            // redirect to user page
-            this.$router.push('/user')
-          },1000);
-        }
+          if (result.status == 200) {
+
+            const token = result.data.access_token;
+            this.loading = true;
+
+            setTimeout(()=>{
+              this.loading = false;
+              
+              // use vuex to store user information
+              this.$store.dispatch('auth_success',this.username, token);
+              
+              // save login token and username in localstorage
+              localStorage.setItem('token', token);
+              localStorage.setItem('username', this.username);
+              // redirect to user page
+              this.$router.push('/user')
+            },1000);
+          }
       })
       .catch((err) => {
         this.errorMessage = err.response.data.Message;
@@ -89,7 +90,11 @@ form {
   box-shadow: 0px 5px 5px 1px #aba8a8;
 }
 
-#logo{
+#title {
+  color: #000000;
+}
+
+#logo {
   width: 200px;
 }
 
@@ -134,5 +139,11 @@ button[type="submit"] {
 
 i {
   color: #000000;
+}
+
+p#error {
+  color: red;
+  font-weight: bold;
+  font-size: 15px;
 }
 </style>

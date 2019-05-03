@@ -1,6 +1,8 @@
 <template>
   <div class="hello">
     <h1>{{ greeting }}</h1>
+    <div>
+    </div>
     <button @click='logout'>Logout</button>
   </div>
 </template>
@@ -15,13 +17,12 @@ export default {
   },
   methods:{
     logout(){
-      localStorage.removeItem('login');
+      localStorage.removeItem('token');
       location.reload();
     }
   },
   computed: {
     greeting(){
-      // get user name from vuex
       return 'Welcome ' + this.$store.state.username;
     }
   }
